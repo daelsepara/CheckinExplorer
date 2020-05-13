@@ -34,6 +34,9 @@ angular
 			$http.get('https://daelsepara.pythonanywhere.com/api/v1/list/users', config).then(function(result) {
 
 				$scope.users = result.data;
+
+				// see: https://stackoverflow.com/questions/45924821/javascript-sorting-array-of-objects-by-string-property
+				$scope.users.sort(function(a, b) {return (a.user > b.user) ? 1 : ((b.user > a.user) ? -1 : 0);} );
 			});
 		}
 
@@ -42,8 +45,11 @@ angular
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
 			$http.get('https://daelsepara.pythonanywhere.com/api/v1/list/projects', config).then(function(result) {
-
+				
 				$scope.projects = result.data;
+
+				// see: https://stackoverflow.com/questions/45924821/javascript-sorting-array-of-objects-by-string-property
+				$scope.projects.sort(function(a, b) {return (a.project > b.project) ? 1 : ((b.project > a.project) ? -1 : 0);} );
 			});
 		}
 
