@@ -31,7 +31,7 @@ angular
 			
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
-			$http.get('http://daelsepara.pythonanywhere.com/api/v1/list/users', config).then(function(result) {
+			$http.get('https://daelsepara.pythonanywhere.com/api/v1/list/users', config).then(function(result) {
 
 				$scope.users = result.data;
 			});
@@ -41,7 +41,7 @@ angular
 			
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
-			$http.get('http://daelsepara.pythonanywhere.com/api/v1/list/projects', config).then(function(result) {
+			$http.get('https://daelsepara.pythonanywhere.com/api/v1/list/projects', config).then(function(result) {
 
 				$scope.projects = result.data;
 			});
@@ -51,7 +51,7 @@ angular
 			
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
-			$http.get('http://daelsepara.pythonanywhere.com/api/v1/checkins', config).then(function(result) {
+			$http.get('https://daelsepara.pythonanywhere.com/api/v1/checkins', config).then(function(result) {
 
 				$scope.checkins = result.data;
 
@@ -65,7 +65,7 @@ angular
 			
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
-			$http.get('http://daelsepara.pythonanywhere.com/api/v1/users', config).then(function(result) {
+			$http.get('https://daelsepara.pythonanywhere.com/api/v1/users', config).then(function(result) {
 
 				$scope.user_output = result.data;
 
