@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex">
+  <title>Data Explorer - Code Checkins</title>
+
+	<script src="js/angular.min.js"></script>
+	<script src="js/ng-webworker.min.js"></script>
+	<script src="js/angular-file-saver.bundle.min.js"></script>
+	<script src="js/d3.min.js"></script>
+	<script src="js/Checkins.js"></script>
+	<style>
+
+	text {
+	  pointer-events: none;
+	}
+
+	.link {
+	  stroke: #999;
+	  stroke-opacity: 0.6;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div ng-app="DataExplorer">
+				<div ng-controller="CheckinsController" ng-init="Initialize()">
+					<br/>
+					<h2>Data Explorer - Code Checkins</h2>
+					<br/>
+					<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+					  <li class="nav-item">
+						<a class="nav-link active" id="pills-data-tab" data-toggle="pill" href="#pills-data" role="tab" aria-controls="pills-data" aria-selected="true">Data</a>
+					  </li>
+					  <li class="nav-item">
+						<a class="nav-link" id="pills-users-tab" data-toggle="pill" href="#pills-users" role="tab" aria-controls="pills-users" aria-selected="false">Users</a>
+					  </li>
+					  <li class="nav-item">
+						<a class="nav-link" id="pills-summary-tab" data-toggle="pill" href="#pills-summary" role="tab" aria-controls="pills-summary" aria-selected="false">Summary</a>
+					  </li>
+					</ul>
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-data" role="tabpanel" aria-labelledby="pills-data-tab">
+							<div class="container border border-secondary rounded">
+								<br/>
+								<b class = 'text-primary'>Users</b>
+								<select ng-model="selected_user" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All users)</option>
+  									<option ng-repeat="x in users" value="{{x.user}}">{{x.user}}</option>
+								</select>
+								<br/>
+								<b class = 'text-primary'>Projects</b>
+								<select ng-model="selected_project" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All projects)</option>
+  									<option ng-repeat="x in projects" value="{{x.project}}">{{x.project}}</option>
+								</select>
+								<br/>
+								<b class = 'text-primary'>Code Checkins</b><br/>
+								<table class="table">
+									<thead>
+										<tr>
+											<th scope="col">User</th>
+											<th scope="col">Project</th>
+											<th scope="col">Date/Time</th>
+											<th scope="col">Hours</th>
+										</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="x in page_checkins">
+										<td class = 'text-primary'>{{ x.user }}</td>
+										<td class = 'text-danger'>{{ x.project }}</td>
+										<td class = 'text-info'>{{ x.datetime }}</td>
+										<td class = 'text-success'>{{ x.hours }}</td>
+									</tr>
+									</tbody>
+								</table>
+								<input type="button" class="btn btn-primary" value="< Prev" ng-click="PreviousCheckinsPage()" ng-disabled = "checkins_page <= 0"/>
+								<input type="button" class="btn btn-primary" value="Next >" ng-click="NextCheckinsPage()" ng-disabled = "((checkins_page + 1) * item_limit) >= filtered_checkins.length"/>
+								<br/><br/>
+							</div>
+							<br/>
+						</div>
+						<div class="tab-pane fade" id="pills-users" role="tabpanel" aria-labelledby="pills-users-tab">
+							<div class="container border border-secondary rounded">
+								<br/>
+								<b class = 'text-primary'>Users</b>
+								<select ng-model="selected_user" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All users)</option>
+  									<option ng-repeat="x in users" value="{{x.user}}">{{x.user}}</option>
+								</select>
+								<br/>
+								<b class = 'text-primary'>Projects</b>
+								<select ng-model="selected_project" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All projects)</option>
+  									<option ng-repeat="x in projects" value="{{x.project}}">{{x.project}}</option>
+								</select>
+								<br/>
+								<b class = 'text-primary'>Total project output</b><br/>
+								<table class="table">
+									<thead>
+										<tr>
+											<th scope="col">User</th>
+											<th scope="col">Project</th>
+											<th scope="col">Hours</th>
+										</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="x in page_output">
+										<td class = 'text-primary'>{{ x.user }}</td>
+										<td class = 'text-danger'>{{ x.project }}</td>
+										<td class = 'text-success'>{{ x.hours }}</td>
+									</tr>
+									</tbody>
+								</table>
+								<input type="button" class="btn btn-primary" value="< Prev" ng-click="PreviousUsersPage()" ng-disabled = "users_page <= 0"/>
+								<input type="button" class="btn btn-primary" value="Next >" ng-click="NextUsersPage()" ng-disabled = "((users_page + 1) * item_limit) >= filtered_output.length"/>
+								<br/><br/>
+							</div>
+							<br/>
+						</div>
+						<div class="tab-pane fade" id="pills-summary" role="tabpanel" aria-labelledby="pills-summary-tab">
+							<div class="container border border-secondary rounded">
+								<br/>
+								<b class = 'text-primary'>Users</b>
+								<select ng-model="selected_user" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All users)</option>
+  									<option ng-repeat="x in users" value="{{x.user}}">{{x.user}}</option>
+								</select>
+								<br/>
+								<b class = 'text-primary'>Summary</b><br/>
+								<table class="table">
+									<thead>
+										<tr>
+											<th scope="col">User</th>
+											<th scope="col">Projects</th>
+											<th scope="col">Total Hours</th>
+										</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="x in page_summary">
+										<td class = 'text-primary'>{{ x.user }}</td>
+										<td class = 'text-danger' style ="word-break:break-all;">{{ x.projects }}</td>
+										<td class = 'text-success'>{{ x.hours }}</td>
+									</tr>
+									</tbody>
+								</table>
+								<input type="button" class="btn btn-primary" value="< Prev" ng-click="PreviousSummaryPage()" ng-disabled = "summary_page <= 0"/>
+								<input type="button" class="btn btn-primary" value="Next >" ng-click="NextSummaryPage()" ng-disabled = "((summary_page + 1) * item_limit) >= filtered_summary.length"/>
+								<br/><br/>
+							</div>
+							<br/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="js/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script>
+	(function () {
+
+		// see: https://www.michalspacek.com/using-javascript-to-modify-urls-and-hide-fbclid
+		
+		var param = 'fbclid';
+	
+		if (location.search.indexOf(param + '=') !== -1) {
+		
+			var replace = '';
+		
+			try {
+		
+				var url = new URL(location);
+				url.searchParams.delete(param);
+				replace = url.href;
+		
+			} catch (ex) {
+
+				var regExp = new RegExp('[?&]' + param + '=.*$');
+				replace = location.search.replace(regExp, '');
+				replace = location.pathname + replace + location.hash;
+			}
+		
+			history.replaceState(null, '', replace);
+    	}
+	})();
+	</script>
+</body>
+</html>
