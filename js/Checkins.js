@@ -79,7 +79,7 @@ angular
 			
 			var config = {'Content-Type': 'application/json; charset=utf-8'};
 
-			$http.get('http://daelsepara.pythonanywhere.com/api/v1/summary', config).then(function(result) {
+			$http.get('https://daelsepara.pythonanywhere.com/api/v1/summary', config).then(function(result) {
 
 				$scope.summary = result.data;
 
