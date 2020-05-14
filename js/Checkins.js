@@ -218,6 +218,12 @@ angular
 				}
 			}
 
+			if (filtered_list.length > 0) {
+				if ($scope.selected_project.length > 0) {
+					filtered_list = filtered_list.filter(x => x.projects.includes($scope.selected_project));
+				}
+			}
+			
 			$scope.filtered_summary = filtered_list;
 		}
 

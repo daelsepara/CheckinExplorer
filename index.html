@@ -131,6 +131,12 @@
   									<option ng-repeat="x in users" value="{{x.user}}">{{x.user}}</option>
 								</select>
 								<br/>
+								<b class = 'text-primary'>Projects</b>
+								<select ng-model="selected_project" class="form-control" ng-change = 'ApplyAllFilters()'>
+									<option value="">(All projects)</option>
+  									<option ng-repeat="x in projects" value="{{x.project}}">{{x.project}}</option>
+								</select>
+								<br/>
 								<b class = 'text-primary'>Summary</b><br/>
 								<table class="table">
 									<thead>
